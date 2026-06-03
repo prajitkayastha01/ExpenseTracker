@@ -1,0 +1,36 @@
+<p>transaction-list works!</p>
+
+<form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+  <input type="number" formControlName="userAccountId">
+  <input type="number" formControlName="transactionCategoryId">
+  <input type="number" formControlName="transactionAmount">
+  <input type="text" formControlName="note" />
+  <button type="submit">Submit</button>
+</form>
+
+<ng-container *ngIf="transactions.length > 0; else noData">
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Type</th>
+        <th>Amount</th>
+        <th>Note</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- your *ngFor <tr> goes here -->
+      <tr *ngFor="let data of transactions"
+        [ngClass]="{'income':data.type == 'Income','expense': data.type == 'Expense'}">
+        <td>{{data.transactionCategory}}</td>
+        <td>{{data.type}}</td>
+        <td>{{data.transactionAmount | currency: 'NPR '}}</td>
+        <td>{{data.note}}</td>
+        <td>{{data.insertDate | date: 'yyyy-MM-dd'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</ng-container>
+
+<ng-template #noData>No Transaction Found</ng-template>

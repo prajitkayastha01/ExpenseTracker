@@ -1,0 +1,5 @@
+<p>dashboard works!</p>
+
+<div *ngIf="balance; else noData">Balance: {{ balance | currency}}</div>
+
+<ng-template #noData><div>No Transactions found</div></ng-template>
