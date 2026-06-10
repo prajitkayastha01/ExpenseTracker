@@ -8,6 +8,7 @@
   <button type="submit">Submit</button>
 </form>
 
+<div *ngIf = "errorMessage">{{errorMessage}}</div>
 <ng-container *ngIf="transactions.length > 0; else noData">
   <table>
     <thead>

@@ -43,7 +43,13 @@ namespace ExpenseTracker.API.Controllers
         {
             var result = await _transactionService.AddTransactionAsync(transaction);
             if (result > 0)
+            {
                 return Ok(result);
+            }
+            else if (result == -1)
+            {
+                return StatusCode(500, "Failed to Insert data");          
+            }
             return BadRequest("Failed to add transaction.");
         }
     }

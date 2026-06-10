@@ -15,6 +15,7 @@ import { FormControl, FormGroup, Validator, Validators } from '@angular/forms';
 export class TransactionListComponent implements OnInit {
 
   transactions: Transaction[] = [];
+  errorMessage: string = '' ;
 
   transactionForm = new FormGroup({
     userAccountId: new FormControl('', Validators.required),
@@ -37,19 +38,21 @@ export class TransactionListComponent implements OnInit {
   }
 
   onSubmit() {
+    this.errorMessage  = '';
     if (this.transactionForm.invalid) return; 
     console.log(this.transactionForm.value);  
     let formData = this.transactionForm.value
 
     this.TransactionService.addTransaction(formData).subscribe(res =>{
       console.log(res);
-      
       if (res == 0){
         console.error('Error');
       }else{
         this.getTransactions(Number(formData.userAccountId));
-        this.transactionForm.reset
+        this.transactionForm.reset();
       }
+    },(error) => {
+      this.errorMessage = "ErrorMessage: "+ error.error;
     })
   }
 }

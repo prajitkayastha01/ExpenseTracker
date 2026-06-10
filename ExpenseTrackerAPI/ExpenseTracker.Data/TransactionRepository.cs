@@ -14,16 +14,16 @@ namespace ExpenseTracker.Data
     public class TransactionRepository : ITransactionRepository
     {
         private readonly string _connectionString;
-        private string sql;
-        public TransactionRepository(string connectionString) 
-        { 
+        private string sql = "";
+        public TransactionRepository(string connectionString)
+        {
             _connectionString = connectionString;
         }
 
         public List<TransactionDto> GetTransactionByUserAccountId(int userAccountId)
-        { 
+        {
             var transaction = new List<TransactionDto>();
-            using (SqlConnection conn = new SqlConnection(_connectionString)) 
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
 
@@ -49,16 +49,16 @@ namespace ExpenseTracker.Data
 
                 }
             }
-            
+
             return transaction;
         }
 
         public async Task<decimal> GetBalance(int userAccountId)
         {
             //var balance = new Task<decimal>();
-            using (var conn = new SqlConnection(_connectionString)) 
-            { 
-                 await conn.OpenAsync();
+            using (var conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
 
                 sql = "select SUM(Case when tc.Type = 'Income' then t.TransactionAmount else 0 end) - sum(case when tc.Type = 'Expense' then t.TransactionAmount else 0 end) as Balance from [Transaction] as t inner join TransactionCategory as tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserAccountId = @userAccountId and t.IsDeleted = 0";
                 using (var command = new SqlCommand(sql, conn))
@@ -66,26 +66,34 @@ namespace ExpenseTracker.Data
                     command.Parameters.AddWithValue("@userAccountId", userAccountId);
                     var result = await command.ExecuteScalarAsync();
 
-                    return result == DBNull.Value ? 0 : Convert.ToDecimal (result);
+                    return result == DBNull.Value ? 0 : Convert.ToDecimal(result);
                 }
             }
         }
 
         public async Task<int> AddTransactionAsync(Transaction transaction)
         {
-            using (var conn = new SqlConnection(_connectionString))
+            try
             {
-                await conn.OpenAsync();
-
-                sql = "INSERT INTO [Transaction] (UserAccountId, TransactionCategoryId, TransactionAmount, IsDeleted, Note, InsertDate) VALUES (@UserAccountId, @TransactionCategoryId, @TransactionAmount, 0, @Note, GETDATE())";
-                using (var command = new SqlCommand(sql, conn))
+                using (var conn = new SqlConnection(_connectionString))
                 {
-                    command.Parameters.AddWithValue("@UserAccountId", transaction.UserAccountId);
-                    command.Parameters.AddWithValue("@TransactionCategoryId", transaction.TransactionCategoryId);
-                    command.Parameters.AddWithValue("@TransactionAmount", transaction.TransactionAmount);
-                    command.Parameters.AddWithValue("@Note", transaction.Note);
-                    return await command.ExecuteNonQueryAsync();
+                    await conn.OpenAsync();
+
+                    sql = "INSERT INTO [Transaction] (UserAccountId, TransactionCategoryId, TransactionAmount, IsDeleted, Note, InsertDate) VALUES (@UserAccountId, @TransactionCategoryId, @TransactionAmount, 0, @Note, GETDATE())";
+                    using (var command = new SqlCommand(sql, conn))
+                    {
+                        command.Parameters.AddWithValue("@UserAccountId", transaction.UserAccountId);
+                        command.Parameters.AddWithValue("@TransactionCategoryId", transaction.TransactionCategoryId);
+                        command.Parameters.AddWithValue("@TransactionAmount", transaction.TransactionAmount);
+                        command.Parameters.AddWithValue("@Note", transaction.Note);
+                        return await command.ExecuteNonQueryAsync();
+                    }
                 }
+            }
+            catch(SqlException ex)
+            {
+                Console.WriteLine("Error in addTransactionasync"+ ex);
+                return -1;
             }
         }
     }
