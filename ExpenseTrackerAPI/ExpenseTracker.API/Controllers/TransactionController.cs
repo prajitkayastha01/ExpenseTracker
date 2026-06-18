@@ -52,5 +52,21 @@ namespace ExpenseTracker.API.Controllers
             }
             return BadRequest("Failed to add transaction.");
         }
+
+        [HttpDelete ("{id}")]
+
+        public async Task<IActionResult> DeleteTransaction(int id)
+        {
+            var result = await _transactionService.DeleteTransaction(id);
+            if (result > 0)
+            {
+                return Ok(result);
+            }
+            else if (result == -1)
+            {
+                return StatusCode(500, "Failed to delete transaction");
+            }
+            return NotFound();
+        }
     }
 }

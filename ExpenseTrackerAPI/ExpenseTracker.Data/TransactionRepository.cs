@@ -14,7 +14,6 @@ namespace ExpenseTracker.Data
     public class TransactionRepository : ITransactionRepository
     {
         private readonly string _connectionString;
-        private string sql = "";
         public TransactionRepository(string connectionString)
         {
             _connectionString = connectionString;
@@ -27,7 +26,7 @@ namespace ExpenseTracker.Data
             {
                 conn.Open();
 
-                sql = "select t.TransactionId,tc.TransactionCategory,tc.type,t.note,t.TransactionAmount,t.insertdate from [transaction] t inner join transactionCategory tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserAccountId = @userAccountId and t.isDeleted = 0";
+                string sql = "select t.TransactionId,tc.TransactionCategory,tc.type,t.note,t.TransactionAmount,t.insertdate from [transaction] t inner join transactionCategory tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserAccountId = @userAccountId and t.isDeleted = 0";
                 using (var command = new SqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@userAccountId", userAccountId);
@@ -60,7 +59,7 @@ namespace ExpenseTracker.Data
             {
                 await conn.OpenAsync();
 
-                sql = "select SUM(Case when tc.Type = 'Income' then t.TransactionAmount else 0 end) - sum(case when tc.Type = 'Expense' then t.TransactionAmount else 0 end) as Balance from [Transaction] as t inner join TransactionCategory as tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserAccountId = @userAccountId and t.IsDeleted = 0";
+                string sql = "select SUM(Case when tc.Type = 'Income' then t.TransactionAmount else 0 end) - sum(case when tc.Type = 'Expense' then t.TransactionAmount else 0 end) as Balance from [Transaction] as t inner join TransactionCategory as tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserAccountId = @userAccountId and t.IsDeleted = 0";
                 using (var command = new SqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@userAccountId", userAccountId);
@@ -79,7 +78,7 @@ namespace ExpenseTracker.Data
                 {
                     await conn.OpenAsync();
 
-                    sql = "INSERT INTO [Transaction] (UserAccountId, TransactionCategoryId, TransactionAmount, IsDeleted, Note, InsertDate) VALUES (@UserAccountId, @TransactionCategoryId, @TransactionAmount, 0, @Note, GETDATE())";
+                    string sql = "INSERT INTO [Transaction] (UserAccountId, TransactionCategoryId, TransactionAmount, IsDeleted, Note, InsertDate) VALUES (@UserAccountId, @TransactionCategoryId, @TransactionAmount, 0, @Note, GETDATE())";
                     using (var command = new SqlCommand(sql, conn))
                     {
                         command.Parameters.AddWithValue("@UserAccountId", transaction.UserAccountId);
@@ -93,6 +92,28 @@ namespace ExpenseTracker.Data
             catch(SqlException ex)
             {
                 Console.WriteLine("Error in addTransactionasync"+ ex);
+                return -1;
+            }
+        }
+
+        public async Task<int> DeleteTransaction(int transactionId)
+        {
+            try
+            {
+                using (var conn = new SqlConnection(_connectionString))
+                {
+                    await conn.OpenAsync();
+                    string sql = "UPDATE [Transaction] SET IsDeleted = 1 WHERE TransactionId = @transactionId";
+                    using (var command = new SqlCommand(sql, conn))
+                    {
+                        command.Parameters.AddWithValue("@transactionId", transactionId);
+                        return await command.ExecuteNonQueryAsync();
+                    }
+                }
+            }
+            catch (SqlException ex) 
+            { 
+                Console.WriteLine("Error in DeleteTransaction: " + ex);
                 return -1;
             }
         }

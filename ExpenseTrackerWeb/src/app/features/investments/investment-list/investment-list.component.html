@@ -1,1 +1,34 @@
 <p>investment-list works!</p>
+<div class="container">
+    <h2>Your Investments</h2>
+
+    <ng-container *ngIf="investments.length > 0; else noData">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Buy Price</th>
+                    <th>Current Price</th>
+                    <th>P&L</th>
+                    <th>Purchase Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of investments">
+                    <td>{{data.symbol}}</td>
+                    <td>{{data.investmentTypeName}}</td>
+                    <td>{{data.quantity}}</td>
+                    <td>{{data.buyPrice | currency: 'NPR '}}</td>
+                    <td>{{data.currentPrice | currency: 'NPR '}}</td>
+                    <td [ngClass]="{ 'text-success': data.pl > 0, 'text-danger': data.pl < 0 }">{{data.pl | currency:
+                        'NPR '}}</td>
+                    <td>{{data.purchaseDate | date: 'yyyy-MM-dd'}}</td>
+
+                </tr>
+            </tbody>
+        </table>
+    </ng-container>
+    <ng-template #noData>No Data Found</ng-template>
+</div>

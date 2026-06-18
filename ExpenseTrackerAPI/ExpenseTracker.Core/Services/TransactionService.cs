@@ -29,5 +29,10 @@ namespace ExpenseTracker.Core.Services
             transaction.IsDeleted = false;
             return await _transactionRepository.AddTransactionAsync(transaction);
         }
+
+        public async Task<int> DeleteTransaction(int transactionId)
+        {
+            return await _transactionRepository.DeleteTransaction(transactionId);
+        }
     }
 }

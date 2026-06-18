@@ -20,4 +20,9 @@ export class TransactionService {
   addTransaction(json: any): Observable<any>{
     return  this.http.post<any>(`${this.baseUrl}`, json);
   }
+
+  deleteTransaction(id: number): Observable<any>{
+    const response = this .http.delete<any>(`${this.baseUrl}/${id}`);
+    return response;
+  }
 }

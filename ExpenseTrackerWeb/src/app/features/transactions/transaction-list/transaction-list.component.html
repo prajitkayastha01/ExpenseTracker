@@ -18,6 +18,7 @@
         <th>Amount</th>
         <th>Note</th>
         <th>Date</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -29,6 +30,7 @@
         <td>{{data.transactionAmount | currency: 'NPR '}}</td>
         <td>{{data.note}}</td>
         <td>{{data.insertDate | date: 'yyyy-MM-dd'}}</td>
+        <td><button (click)="deleteTransaction(data.transactionId)">Delete</button></td>
       </tr>
     </tbody>
   </table>

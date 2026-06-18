@@ -9,5 +9,6 @@ namespace ExpenseTracker.Core.Interfaces
         Task<decimal>GetBalance(int userAccountId);
 
         Task<int> AddTransactionAsync(Transaction transaction);
+        Task<int> DeleteTransaction(int transaction);
     }
 }

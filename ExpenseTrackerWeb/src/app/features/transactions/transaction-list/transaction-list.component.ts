@@ -16,6 +16,7 @@ export class TransactionListComponent implements OnInit {
 
   transactions: Transaction[] = [];
   errorMessage: string = '' ;
+  userAccountId: number = 2
 
   transactionForm = new FormGroup({
     userAccountId: new FormControl('', Validators.required),
@@ -27,7 +28,7 @@ export class TransactionListComponent implements OnInit {
   constructor(private TransactionService: TransactionService) { }
 
   ngOnInit() {
-    this.getTransactions(2);
+    this.getTransactions(this.userAccountId);
   }
 
   getTransactions(userAccountId: number) {
@@ -53,6 +54,21 @@ export class TransactionListComponent implements OnInit {
       }
     },(error) => {
       this.errorMessage = "ErrorMessage: "+ error.error;
+    })
+  }
+
+  deleteTransaction(id: number)
+  {
+    this.errorMessage = '';
+
+    this.TransactionService.deleteTransaction(id).subscribe(res => {
+      if (res > 0){
+        this.getTransactions(this.userAccountId);
+      }else{
+        this.errorMessage = 'Transaction not found or already deleted';
+      }
+    }, (error) => {
+      this.errorMessage = "ErrorMessage: " + error.error;
     })
   }
 }
