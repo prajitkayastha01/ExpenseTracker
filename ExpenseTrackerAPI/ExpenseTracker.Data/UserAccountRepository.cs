@@ -1,4 +1,5 @@
-﻿using ExpenseTracker.Core.Interfaces;
+﻿using ExpenseTracker.Core.DTOs;
+using ExpenseTracker.Core.Interfaces;
 using ExpenseTracker.Core.Models;
 using Microsoft.Data.SqlClient;
 
@@ -72,6 +73,30 @@ namespace ExpenseTracker.Data
             }
 
             return accounts;
+        }
+
+        public async Task<int> ValidateUserCredentialsAsync(string connectionString, LoginRequestDto loginDto)
+        {
+           
+            string query = "SELECT u.UserId FROM [User] u JOIN UserCredential ua ON u.UserId = ua.UserId WHERE u.Email = @Email AND ua.PasswordHash = @Password";
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", loginDto.Email);
+                    cmd.Parameters.AddWithValue("@Password", loginDto.Password);
+
+                    await conn.OpenAsync();
+                    object result = await cmd.ExecuteScalarAsync();
+
+                    if (result != null && result != DBNull.Value)
+                    {
+                        return Convert.ToInt32(result); // Returns valid UserId
+                    }
+                    return 0; // Invalid credentials
+                }
+            }
         }
     }
 }

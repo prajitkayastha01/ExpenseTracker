@@ -1,5 +1,6 @@
 ﻿using ExpenseTracker.Core.DTOs;
 using ExpenseTracker.Core.Interfaces;
+using ExpenseTracker.Core.Models;
 using Microsoft.Data.SqlClient;
 
 namespace ExpenseTracker.Data
@@ -7,17 +8,17 @@ namespace ExpenseTracker.Data
     public class UserInvestmentRepository: IUserInvestmentRepository
 
     {
-        private readonly String _connectioString;
+        private readonly String _connectionString;
 
         public UserInvestmentRepository(String connectioString)
         {
-            _connectioString = connectioString;
+            _connectionString = connectioString;
         }
 
         public async Task<List<UserInvestmentDto>> GetUserInvestmentsByUserId(int userId)
         {
             var investments = new List<UserInvestmentDto>();
-            using (SqlConnection conn = new SqlConnection(_connectioString)) 
+            using (SqlConnection conn = new SqlConnection(_connectionString)) 
             { 
                 conn.Open();
 
@@ -49,6 +50,37 @@ namespace ExpenseTracker.Data
                     return investments;
 
                 }
+            }
+        }
+
+        public async Task<int>  addUserInvestment(UserInvestment userInvestment)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(_connectionString))
+                {
+                    conn.Open();
+
+                    string sql = "INSERT INTO UserInvestment (UserId,InvestmentTypeId,Symbol,Quantity,BuyPrice,CurrentPrice,PurchaseDate) VALUES (@UserId,@InvestmentTypeId,@Symbol,@Quantity,@BuyPrice,@CurrentPrice,@PurchaseDate)";
+                    using (var cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@UserId", userInvestment.UserId);
+                        cmd.Parameters.AddWithValue("@InvestmentTypeId", userInvestment.InvestmentTypeId);
+                        cmd.Parameters.AddWithValue("@Symbol", userInvestment.Symbol);
+                        cmd.Parameters.AddWithValue("@Quantity", userInvestment.Quantity);
+                        cmd.Parameters.AddWithValue("@BuyPrice", userInvestment.BuyPrice);
+                        cmd.Parameters.AddWithValue("@CurrentPrice", userInvestment.CurrentPrice);
+                        cmd.Parameters.AddWithValue("@PurchaseDate",userInvestment.PurchaseDate);
+
+                        return await cmd.ExecuteNonQueryAsync();
+                    }
+                }
+
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine("Error in addUserInvestment" + ex);
+                return -1;
             }
         }
     }

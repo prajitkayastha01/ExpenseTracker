@@ -32,6 +32,8 @@ builder.Services.AddScoped<ITransactionRepository>(_ => new TransactionRepositor
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserInvestmentRepository>(_ => new UserInvestmentRepository(connectionString));
 builder.Services.AddScoped<IUserInvestmentService, UserInvestmentService>();
+builder.Services.AddScoped<IInvestmentTypeRepository>(_ => new InvestmentTypeRepository(connectionString));
+builder.Services.AddScoped<IInvestmentTypeService, InvestmentTypeService>();
 
 var app = builder.Build();
 

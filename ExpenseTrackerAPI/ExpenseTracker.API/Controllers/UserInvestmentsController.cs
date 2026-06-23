@@ -1,4 +1,5 @@
 ﻿using ExpenseTracker.Core.Interfaces;
+using ExpenseTracker.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTracker.API.Controllers
@@ -21,6 +22,22 @@ namespace ExpenseTracker.API.Controllers
         {
             var result = await _userInvestmentService.GetUserInvestmentsByUserId(userId);
             return Ok(result);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> AddUserInvestment([FromBody] UserInvestment userInvestment)
+        {
+            var result = await _userInvestmentService.AddUserInvestment(userInvestment);
+
+            if (result > 0)
+            {
+                return StatusCode(201,result);
+            }
+            else
+            {
+                return StatusCode(500, "Failed to Insert data");
+            }
         }
     }
 }

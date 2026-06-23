@@ -1,6 +1,16 @@
-<p>investment-list works!</p>
 <div class="container">
     <h2>Your Investments</h2>
+
+<form [formGroup]="investmentForm" (ngSubmit)="onSubmit()">
+  <select formControlName="investmentTypeId">
+    <option *ngFor="let types of investmentTypes" [ngValue]="types.investmentTypeId">{{types.investmentTypeName}}</option>
+  </select>
+  <input type="text" formControlName="symbol" maxlength="5">
+  <input type="number" formControlName="quantity">
+  <input type="number" formControlName="buyPrice" />
+  <input type="date" formControlName="purchaseDate" />
+  <button type="submit">Submit</button>
+</form>
 
     <ng-container *ngIf="investments.length > 0; else noData">
         <table class="table">

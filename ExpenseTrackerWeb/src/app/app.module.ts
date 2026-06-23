@@ -13,7 +13,8 @@ import { TransactionListComponent } from './features/transactions/transaction-li
 import { InvestmentListComponent } from './features/investments/investment-list/investment-list.component';
 import { ReportsComponent } from './features/reports/reports/reports.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
-import { ReactiveFormsModule} from '@angular/forms'
+import { ReactiveFormsModule} from '@angular/forms';
+import { LoginComponent } from './features/login/login.component'
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { ReactiveFormsModule} from '@angular/forms'
     TransactionListComponent,
     InvestmentListComponent,
     ReportsComponent,
-    NavbarComponent
+    NavbarComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

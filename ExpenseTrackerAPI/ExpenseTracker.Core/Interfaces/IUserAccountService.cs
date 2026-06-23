@@ -1,9 +1,11 @@
-﻿using ExpenseTracker.Core.Models;
+﻿using ExpenseTracker.Core.DTOs;
+using ExpenseTracker.Core.Models;
 
 namespace ExpenseTracker.Core.Interfaces
 {
     public interface IUserAccountService
     {
         List<UserAccount>GetAccountsByUserId(int userId);
+        Task<int> ValidateUserCredentialsAsync(LoginRequestDto loginDto);
     }
 }
