@@ -1,34 +1,38 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ExpenseTracker.Core.DTOs;
-using ExpenseTracker.Data;
 using ExpenseTracker.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ExpenseTracker.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
-        private readonly IUserAccountRepository _userAccountRepository;
+        private readonly IUserAccountService _userAccountService;
 
-        public AuthController(IUserAccountRepository userAccountRepository)
+        public AuthController(IUserAccountService userAccountService)
         {
-            _userAccountRepository = userAccountRepository;
+            _userAccountService = userAccountService;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginData)
         {
-            int userId = await _userAccountRepository.ValidateUserCredentialsAsync(request);
-
-            if (userId > 0)
+            if (loginData == null || string.IsNullOrEmpty(loginData.Email) || string.IsNullOrEmpty(loginData.Password))
             {
-                // need to add logic for JWT
-                // passing unencoded example token
-                return Ok(new { token = $"MOCK-JWT-TOKEN-FOR-USER-{userId}", userId = userId });
+                return BadRequest("Invalid Request.");                
+            }
+            string token = await _userAccountService.AuthenticateUserAsync(loginData);
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized(new { message = "Invalid email or password" });
             }
 
-            return Unauthorized(new { message = "Invalid email or password" });
+
+            return Ok(new { token = token, message = "login Succeessful" });
         }
     }
 }

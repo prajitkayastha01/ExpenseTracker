@@ -1,9 +1,12 @@
-﻿using ExpenseTracker.Core.Interfaces;
+﻿using System.Security.Claims;
+using ExpenseTracker.Core.Interfaces;
 using ExpenseTracker.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTracker.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TransactionController: ControllerBase
@@ -14,11 +17,20 @@ namespace ExpenseTracker.API.Controllers
                 _transactionService = transactionService;
             }
 
-        [HttpGet("{userAccountId}")]
-
-        public IActionResult GetTransactionByUserAccountId(int userAccountId)
+        [HttpGet("transactions")]
+        public async Task<IActionResult> GetTransactions()
         {
-            var result = _transactionService.GetTransactionByUserAccountId(userAccountId);
+            // 1. Extract the UserId directly from the verified Token Claims Principle
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { message = "User identity claim not found in token." });
+            }
+
+            int userAccountId = int.Parse(userIdClaim.Value);
+
+            var result = await _transactionService.GetTransactionByUserAccountId(userAccountId);
 
             if (result == null || result.Count == 0)
             {

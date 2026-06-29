@@ -32,7 +32,7 @@ export class TransactionListComponent implements OnInit {
   }
 
   getTransactions(userAccountId: number) {
-    this.TransactionService.getTransactions(userAccountId).subscribe(res => {
+    this.TransactionService.getTransactions().subscribe(res => {
       console.log(res)
       this.transactions = res;
     });

@@ -14,7 +14,7 @@ namespace ExpenseTracker.Core.Services
             _transactionRepository = transactionRepository;
         }
 
-        public List<TransactionDto> GetTransactionByUserAccountId(int userAccountId)
+        public Task<List<TransactionDto>> GetTransactionByUserAccountId(int userAccountId)
         {
             return _transactionRepository.GetTransactionByUserAccountId(userAccountId);
         }

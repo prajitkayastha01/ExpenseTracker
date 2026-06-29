@@ -5,7 +5,7 @@ namespace ExpenseTracker.Core.Interfaces
 {
     public interface ITransactionRepository
     {
-        List<TransactionDto> GetTransactionByUserAccountId(int userAccountId);
+        Task<List<TransactionDto>> GetTransactionByUserAccountId(int userAccountId);
 
         Task<decimal> GetBalance(int userAccountId);
 

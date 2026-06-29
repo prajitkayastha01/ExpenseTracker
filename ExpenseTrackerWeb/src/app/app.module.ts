@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { ReportsComponent } from './features/reports/reports/reports.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { ReactiveFormsModule} from '@angular/forms';
 import { LoginComponent } from './features/login/login.component'
+import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,13 @@ import { LoginComponent } from './features/login/login.component'
     MatToolbarModule,
     ReactiveFormsModule,
     MatButtonModule
+  ],
+  providers:[
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

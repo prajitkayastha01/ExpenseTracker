@@ -11,8 +11,8 @@ export class TransactionService {
   private baseUrl = 'http://localhost:5081/api/Transaction'; 
   constructor(private http: HttpClient) { }
 
-  getTransactions(userAccountId: number): Observable<Transaction[]>{
-    const response = this.http.get<Transaction[]>(`${this.baseUrl}/${userAccountId}`);
+  getTransactions(): Observable<Transaction[]>{
+    const response = this.http.get<Transaction[]>(`${this.baseUrl}/transactions`);
 
     return response;
   }

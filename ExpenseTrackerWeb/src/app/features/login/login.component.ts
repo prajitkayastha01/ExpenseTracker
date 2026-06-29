@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { UserAccountService } from '../../shared/services/user-account.service';
 
 @Component({
   selector: 'app-login',
@@ -11,9 +12,12 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
-  error: string = '';
+  errorMessage: string = '';
 
-  constructor(private http: HttpClient, private router: Router ) {}
+  constructor(
+    private authService: UserAccountService, 
+    private router: Router 
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -25,15 +29,13 @@ export class LoginComponent implements OnInit {
   onLogin(): void {
     if (this.loginForm.invalid) return;
 
-    this.http.post<any>('http://localhost:5081/api/auth/login', this.loginForm.value)
-      .subscribe({
-        next: (res) => {
-          localStorage.setItem('token', res.token); 
-          this.router.navigate(['/dashboard']);     
-        },
-        error: (err) => {
-          this.error = err.error?.message || 'Login failed';
-        }
-      });
+    this.authService.login(this.loginForm.value).subscribe((res) => {
+        this.errorMessage = '';
+        this.router.navigate(['/dashboard'])
+      },
+      (err) => {
+        this.errorMessage = err.error?.message || 'login failed. Please check your credentials.';
+      }
+    )
   }
 }

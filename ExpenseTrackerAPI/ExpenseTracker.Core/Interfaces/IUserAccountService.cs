@@ -6,6 +6,8 @@ namespace ExpenseTracker.Core.Interfaces
     public interface IUserAccountService
     {
         List<UserAccount>GetAccountsByUserId(int userId);
-        Task<int> ValidateUserCredentialsAsync(LoginRequestDto loginDto);
+        // Task<int> ValidateUserCredentialsAsync(LoginRequestDto loginData);
+
+        Task<string> AuthenticateUserAsync(LoginRequestDto loginData);
     }
 }

@@ -19,32 +19,35 @@ namespace ExpenseTracker.Data
             _connectionString = connectionString;
         }
 
-        public List<TransactionDto> GetTransactionByUserAccountId(int userAccountId)
+        public async Task<List<TransactionDto>> GetTransactionByUserAccountId(int userAccountId)
         {
             var transaction = new List<TransactionDto>();
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
-                conn.Open();
+                await conn.OpenAsync();
 
                 string sql = "select t.TransactionId,tc.TransactionCategory,tc.type,t.note,t.TransactionAmount,t.insertdate from [transaction] t inner join transactionCategory tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserAccountId = @userAccountId and t.isDeleted = 0";
                 using (var command = new SqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@userAccountId", userAccountId);
-                    var reader = command.ExecuteReader();
-
-                    while (reader.Read())
+                    using (var reader = await command.ExecuteReaderAsync())
                     {
-                        TransactionDto transactions = new TransactionDto();
+                        while (await reader.ReadAsync())
+                        {
+                            TransactionDto transactions = new TransactionDto();
 
-                        transactions.TransactionId = Convert.ToInt32(reader["TransactionId"]);
-                        transactions.TransactionCategory = Convert.ToString(reader["TransactionCategory"]) ?? string.Empty;
-                        transactions.Type = Convert.ToString(reader["type"]) ?? string.Empty;
-                        transactions.Note = reader["note"] == DBNull.Value ? string.Empty : Convert.ToString(reader["note"]) ?? string.Empty;
-                        transactions.TransactionAmount = Convert.ToDecimal(reader["TransactionAmount"]);
-                        transactions.InsertDate = Convert.ToDateTime(reader["insertDate"]);
+                            transactions.TransactionId = Convert.ToInt32(reader["TransactionId"]);
+                            transactions.TransactionCategory = Convert.ToString(reader["TransactionCategory"]) ?? string.Empty;
+                            transactions.Type = Convert.ToString(reader["type"]) ?? string.Empty;
+                            transactions.Note = reader["note"] == DBNull.Value ? string.Empty : Convert.ToString(reader["note"]) ?? string.Empty;
+                            transactions.TransactionAmount = Convert.ToDecimal(reader["TransactionAmount"]);
+                            transactions.InsertDate = Convert.ToDateTime(reader["insertDate"]);
 
-                        transaction.Add(transactions);
+                            transaction.Add(transactions);
+                        }
+
                     }
+
 
                 }
             }

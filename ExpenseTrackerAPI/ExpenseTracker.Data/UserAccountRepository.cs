@@ -75,28 +75,55 @@ namespace ExpenseTracker.Data
             return accounts;
         }
 
-        public async Task<int> ValidateUserCredentialsAsync(string connectionString, LoginRequestDto loginDto)
-        {
+        //public async Task<int> ValidateUserCredentialsAsync(string connectionString, LoginRequestDto loginDto)
+        //{
            
-            string query = "SELECT u.UserId FROM [User] u JOIN UserCredential ua ON u.UserId = ua.UserId WHERE u.Email = @Email AND ua.PasswordHash = @Password";
+        //    string query = "SELECT u.UserId FROM [User] u JOIN UserCredential ua ON u.UserId = ua.UserId WHERE u.Email = @Email AND ua.PasswordHash = @Password";
 
-            using (var conn = new SqlConnection(connectionString))
+        //    using (var conn = new SqlConnection(connectionString))
+        //    {
+        //        using (var cmd = new SqlCommand(query, conn))
+        //        {
+        //            cmd.Parameters.AddWithValue("@Email", loginDto.Email);
+        //            cmd.Parameters.AddWithValue("@Password", loginDto.Password);
+
+        //            await conn.OpenAsync();
+        //            object result = await cmd.ExecuteScalarAsync();
+
+        //            if (result != null && result != DBNull.Value)
+        //            {
+        //                return Convert.ToInt32(result); // Returns valid UserId
+        //            }
+        //            return 0; // Invalid credentials
+        //        }
+        //    }
+        //}
+
+        public async Task<(int UserId, string PasswordHash)> GetUserAuthDetailsByEmailAsync(string email)
+        {
+            string query = "SELECT u.UserId, ua.PasswordHash FROM [User] u JOIN UserCredential ua ON u.UserId = ua.UserId WHERE u.Email = @Email";
+
+            using (var conn = new SqlConnection(_connectionString))
             {
                 using (var cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Email", loginDto.Email);
-                    cmd.Parameters.AddWithValue("@Password", loginDto.Password);
-
+                    cmd.Parameters.AddWithValue("@Email", email);
                     await conn.OpenAsync();
-                    object result = await cmd.ExecuteScalarAsync();
 
-                    if (result != null && result != DBNull.Value)
+                    using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        return Convert.ToInt32(result); // Returns valid UserId
+                        if (await reader.ReadAsync())
+                        {
+                            int userId = Convert.ToInt32(reader["UserId"]);
+                            string passwordHash = reader["PasswordHash"].ToString();
+                            return (userId, passwordHash);
+                        }
                     }
-                    return 0; // Invalid credentials
                 }
             }
+            return (0, null); // User not found
         }
+
+
     }
 }
