@@ -69,8 +69,8 @@ if (app.Environment.IsDevelopment())
 }
 
 // Configure the HTTP request pipeline.
-app.UseCors("AllowAngular");
 app.UseRouting();
+app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
 
