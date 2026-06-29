@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { UserAccountService } from '../../shared/services/user-account.service';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   errorMessage: string = '';
 
   constructor(
-    private authService: UserAccountService, 
+    private authService: AuthService, 
     private router: Router 
   ) {}
 
