@@ -77,6 +77,27 @@ namespace ExpenseTracker.Core.Services
             return tokenHandler.WriteToken(securityToken);
         }
 
+        public async Task<(bool Success, string Message)> RegisterAsync(UserRegisterDto data)
+        {
+            // 1. Business Validation
+            bool exists = await _repository.EmailExistsAsync(data.Email);
+            if (exists)
+            {
+                return (false, "Email is already registered.");
+            }
+
+            // 2. Hash Password using BCrypt
+            string passwordHash = PasswordEncryption.HashPassword(data.Password);
+
+            // 3. Persist Data
+            int result = await _repository.RegisterUserAsync(data, passwordHash);
+
+            if (result > 0)
+                return (true, "Registration successful.");
+
+            return (false, " Error occurred during registration.");
+        }
+
         // Call this during the login process
         public static class PasswordEncryption
         {

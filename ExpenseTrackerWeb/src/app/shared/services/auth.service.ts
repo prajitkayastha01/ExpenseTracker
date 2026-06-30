@@ -20,6 +20,10 @@ export class AuthService {
     );
   }
 
+  register(userData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, userData);
+  }
+
   logout(): void {
     localStorage.removeItem('token');
   }

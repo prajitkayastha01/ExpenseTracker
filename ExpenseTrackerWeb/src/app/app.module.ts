@@ -16,6 +16,7 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { ReactiveFormsModule} from '@angular/forms';
 import { LoginComponent } from './features/login/login.component'
 import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
+import { RegisterComponent } from './features/register/register.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { AuthInterceptor } from './shared/interceptors/auth.interceptor';
     InvestmentListComponent,
     ReportsComponent,
     NavbarComponent,
-    LoginComponent
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,

@@ -34,5 +34,27 @@ namespace ExpenseTracker.API.Controllers
 
             return Ok(new { token = token, message = "login Succeessful" });
         }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] UserRegisterDto data)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _userAccountService.RegisterAsync(data);
+
+            if (result.Success)
+            {
+                return Ok(new { message = result.Message });
+            }
+
+            // Return 409 Conflict if email exists, otherwise 500
+            if (result.Message.Contains("already registered"))
+                return Conflict(new { message = result.Message });
+
+            return StatusCode(500, new { message = result.Message });
+        }
     }
 }

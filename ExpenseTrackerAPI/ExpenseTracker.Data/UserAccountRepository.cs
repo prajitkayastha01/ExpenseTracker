@@ -124,6 +124,69 @@ namespace ExpenseTracker.Data
             return (0, null); // User not found
         }
 
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                string sql = "SELECT COUNT(1) FROM [User] WHERE Email = @Email";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    await conn.OpenAsync();
+                    int count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                    return count > 0;
+                }
+            }
+        }
+
+        public async Task<int> RegisterUserAsync(UserRegisterDto user, string passwordHash)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+
+                // Using a SQL Transaction to ensure both inserts succeed or both fail
+                using (SqlTransaction transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        string userSql = @"
+                            INSERT INTO [User] (UserName, PhoneNo, Email, InsertDate) 
+                            OUTPUT INSERTED.UserId 
+                            VALUES (@UserName, @PhoneNo, @Email, GETDATE());";
+
+                        int newUserId;
+                        using (SqlCommand cmd = new SqlCommand(userSql, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@UserName", user.UserName);
+                            cmd.Parameters.AddWithValue("@PhoneNo", user.PhoneNo);
+                            cmd.Parameters.AddWithValue("@Email", user.Email);
+
+                            newUserId = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+                        }
+
+                        string authSql = @"
+                            INSERT INTO UserCredential (UserId, PasswordHash, InsertDate) 
+                            VALUES (@UserId, @PasswordHash, GETDATE());";
+
+                        using (SqlCommand cmd = new SqlCommand(authSql, conn, transaction))
+                        {
+                            cmd.Parameters.AddWithValue("@UserId", newUserId);
+                            cmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                            await cmd.ExecuteNonQueryAsync();
+                        }
+
+                        await transaction.CommitAsync();
+                        return newUserId;
+                    }
+                    catch (SqlException)
+                    {
+                        await transaction.RollbackAsync();
+                        return -1;
+                    }
+                }
+            }
+        }
 
     }
 }

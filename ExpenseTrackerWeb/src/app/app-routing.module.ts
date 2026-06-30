@@ -6,10 +6,12 @@ import { InvestmentListComponent } from './features/investments/investment-list/
 import { ReportsComponent } from './features/reports/reports/reports.component';
 import { LoginComponent } from './features/login/login.component';
 import { authGuard } from './shared/guards/auth.guard';
+import { RegisterComponent } from './features/register/register.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent},
   { path: 'dashboard',    component: DashboardComponent, canActivate: [authGuard] },
   { path: 'transactions', component: TransactionListComponent, canActivate: [authGuard] },
   { path: 'investments',  component: InvestmentListComponent, canActivate: [authGuard] },

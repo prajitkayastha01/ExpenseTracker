@@ -10,5 +10,7 @@ namespace ExpenseTracker.Core.Interfaces
         // Task<int> ValidateUserCredentialsAsync(LoginRequestDto loginData);
 
         Task<(int UserId, string PasswordHash)> GetUserAuthDetailsByEmailAsync(string email);
+        Task<int> RegisterUserAsync(UserRegisterDto user, string passwordHash);
+        Task<bool> EmailExistsAsync(string email);
     }
 }

@@ -1,10 +1,18 @@
 <p>transaction-list works!</p>
 
 <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+  <label class="form-label">User AccountId: </label>
   <input type="number" formControlName="userAccountId">
+
+  <label class="form-label">Transaction CategoryId: </label>
   <input type="number" formControlName="transactionCategoryId">
+
+  <label class="form-label">Amount: </label>
   <input type="number" formControlName="transactionAmount">
+
+  <label class="form-label">Note: </label>
   <input type="text" formControlName="note" />
+
   <button type="submit">Submit</button>
 </form>
 
