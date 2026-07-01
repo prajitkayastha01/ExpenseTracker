@@ -1,44 +1,72 @@
-<div class="container">
-    <h2>Your Investments</h2>
+<div class="page-shell">
+  <div class="panel">
+    <h2>Add Investment</h2>
+    <form [formGroup]="investmentForm" (ngSubmit)="onSubmit()" class="form-grid">
+      <div class="field">
+        <label>Investment Type</label>
+        <select formControlName="investmentTypeId">
+          <option *ngFor="let types of investmentTypes" [ngValue]="types.investmentTypeId">{{ types.investmentTypeName }}</option>
+        </select>
+      </div>
 
-<form [formGroup]="investmentForm" (ngSubmit)="onSubmit()">
-  <select formControlName="investmentTypeId">
-    <option *ngFor="let types of investmentTypes" [ngValue]="types.investmentTypeId">{{types.investmentTypeName}}</option>
-  </select>
-  <input type="text" formControlName="symbol" maxlength="5">
-  <input type="number" formControlName="quantity">
-  <input type="number" formControlName="buyPrice" />
-  <input type="date" formControlName="purchaseDate" />
-  <button type="submit">Submit</button>
-</form>
+      <div class="field">
+        <label>Symbol</label>
+        <input type="text" formControlName="symbol" maxlength="5" />
+      </div>
+
+      <div class="field">
+        <label>Quantity</label>
+        <input type="number" formControlName="quantity" />
+      </div>
+
+      <div class="field">
+        <label>Buy Price</label>
+        <input type="number" formControlName="buyPrice" />
+      </div>
+
+      <div class="field">
+        <label>Purchase Date</label>
+        <input type="date" formControlName="purchaseDate" />
+      </div>
+
+      <div class="field full-width">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h3>Your Investments</h3>
 
     <ng-container *ngIf="investments.length > 0; else noData">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Symbol</th>
-                    <th>Type</th>
-                    <th>Quantity</th>
-                    <th>Buy Price</th>
-                    <th>Current Price</th>
-                    <th>P&L</th>
-                    <th>Purchase Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let data of investments">
-                    <td>{{data.symbol}}</td>
-                    <td>{{data.investmentTypeName}}</td>
-                    <td>{{data.quantity}}</td>
-                    <td>{{data.buyPrice | currency: 'NPR '}}</td>
-                    <td>{{data.currentPrice | currency: 'NPR '}}</td>
-                    <td [ngClass]="{ 'text-success': data.pl > 0, 'text-danger': data.pl < 0 }">{{data.pl | currency:
-                        'NPR '}}</td>
-                    <td>{{data.purchaseDate | date: 'yyyy-MM-dd'}}</td>
-
-                </tr>
-            </tbody>
-        </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Buy Price</th>
+            <th>Current Price</th>
+            <th>P&amp;L</th>
+            <th>Purchase Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of investments">
+            <td>{{ data.symbol }}</td>
+            <td>{{ data.investmentTypeName }}</td>
+            <td>{{ data.quantity }}</td>
+            <td>{{ data.buyPrice | currency: 'NPR ' }}</td>
+            <td>{{ data.currentPrice | currency: 'NPR ' }}</td>
+            <td [ngClass]="{ 'text-success': data.pl > 0, 'text-danger': data.pl < 0 }">{{ data.pl | currency: 'NPR ' }}</td>
+            <td>{{ data.purchaseDate | date: 'yyyy-MM-dd' }}</td>
+          </tr>
+        </tbody>
+      </table>
     </ng-container>
-    <ng-template #noData>No Data Found</ng-template>
+
+    <ng-template #noData>
+      <p>No Data Found</p>
+    </ng-template>
+  </div>
 </div>

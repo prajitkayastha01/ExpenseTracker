@@ -26,7 +26,7 @@ namespace ExpenseTracker.Data
             {
                 await conn.OpenAsync();
 
-                string sql = "select t.TransactionId,tc.TransactionCategory,tc.type,t.note,t.TransactionAmount,t.insertdate from [transaction] t inner join transactionCategory tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserId = @userAccountId and t.isDeleted = 0";
+                string sql = "select t.TransactionId,tc.TransactionCategory,tc.type,t.note,t.TransactionAmount,t.insertdate from [transaction] t inner join transactionCategory tc on tc.TransactionCategoryId = t.TransactionCategoryId where t.UserAccountId = @userAccountId and t.isDeleted = 0";
                 using (var command = new SqlCommand(sql, conn))
                 {
                     command.Parameters.AddWithValue("@userAccountId", userAccountId);

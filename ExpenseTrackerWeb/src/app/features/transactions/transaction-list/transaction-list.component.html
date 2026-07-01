@@ -1,47 +1,64 @@
-<p>transaction-list works!</p>
+<div class="page-shell">
+  <div class="panel">
+    <h2>Add Transaction</h2>
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="form-grid">
+      <div class="field">
+        <label>User AccountId</label>
+        <input type="number" formControlName="userAccountId" />
+      </div>
 
-<form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
-  <label class="form-label">User AccountId: </label>
-  <input type="number" formControlName="userAccountId">
+      <div class="field">
+        <label>Transaction CategoryId</label>
+        <input type="number" formControlName="transactionCategoryId" />
+      </div>
 
-  <label class="form-label">Transaction CategoryId: </label>
-  <input type="number" formControlName="transactionCategoryId">
+      <div class="field">
+        <label>Amount</label>
+        <input type="number" formControlName="transactionAmount" />
+      </div>
 
-  <label class="form-label">Amount: </label>
-  <input type="number" formControlName="transactionAmount">
+      <div class="field">
+        <label>Note</label>
+        <input type="text" formControlName="note" />
+      </div>
 
-  <label class="form-label">Note: </label>
-  <input type="text" formControlName="note" />
+      <div class="field full-width">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
 
-  <button type="submit">Submit</button>
-</form>
+  <div class="panel">
+    <h3>Transaction List</h3>
+    <p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
 
-<div *ngIf = "errorMessage">{{errorMessage}}</div>
-<ng-container *ngIf="transactions.length > 0; else noData">
-  <table>
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Type</th>
-        <th>Amount</th>
-        <th>Note</th>
-        <th>Date</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- your *ngFor <tr> goes here -->
-      <tr *ngFor="let data of transactions"
-        [ngClass]="{'income':data.type == 'Income','expense': data.type == 'Expense'}">
-        <td>{{data.transactionCategory}}</td>
-        <td>{{data.type}}</td>
-        <td>{{data.transactionAmount | currency: 'NPR '}}</td>
-        <td>{{data.note}}</td>
-        <td>{{data.insertDate | date: 'yyyy-MM-dd'}}</td>
-        <td><button (click)="deleteTransaction(data.transactionId)">Delete</button></td>
-      </tr>
-    </tbody>
-  </table>
-</ng-container>
+    <ng-container *ngIf="transactions.length > 0; else noData">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Note</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of transactions" [ngClass]="{'income': data.type == 'Income', 'expense': data.type == 'Expense'}">
+            <td>{{ data.transactionCategory }}</td>
+            <td>{{ data.type }}</td>
+            <td>{{ data.transactionAmount | currency: 'NPR ' }}</td>
+            <td>{{ data.note }}</td>
+            <td>{{ data.insertDate | date: 'yyyy-MM-dd' }}</td>
+            <td><button class="danger" (click)="deleteTransaction(data.transactionId)">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
 
-<ng-template #noData>No Transaction Found</ng-template>
+    <ng-template #noData>
+      <p>No Transaction Found</p>
+    </ng-template>
+  </div>
+</div>

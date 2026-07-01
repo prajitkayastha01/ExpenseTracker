@@ -1,19 +1,26 @@
-<div>
-  <h2>Tracker Login</h2>
-  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-    <div>
-      <label>Email: </label>
-      <input type="email" formControlName="email" />
-    </div>
-    <div>
-      <label>Password: </label>
-      <input type="password" formControlName="password" />
-    </div>
-    <button type="submit" [disabled]="loginForm.invalid">Login</button>
-  </form>
-  <p *ngIf="errorMessage" style="color: red;">{{ errorMessage }}</p>
+<div class="auth-shell">
+  <div class="auth-card">
+    <h2>Tracker Login</h2>
+    <p class="auth-intro">Sign in to continue managing your expenses.</p>
 
-  <div style="margin-top: 15px;">
-    <p>Don't have an account? <a [routerLink]="['/register']">Register here</a></p>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" placeholder="Enter your email" />
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" placeholder="Enter your password" />
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid">Login</button>
+    </form>
+
+    <p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
+
+    <div class="auth-link">
+      <p>Don’t have an account? <a [routerLink]="['/register']">Register here</a></p>
+    </div>
   </div>
 </div>

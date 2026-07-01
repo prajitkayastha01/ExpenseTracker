@@ -1,3 +1,65 @@
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #d8e0ea;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.field input,
+.field select {
+  padding: 8px;
+  border: 1px solid #c7d2de;
+  border-radius: 6px;
+}
+
+button {
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+
+th, td {
+  border: 1px solid #c7d2de;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background: #f2f5f9;
+}
+
 .text-success {
   color: green;
 }
